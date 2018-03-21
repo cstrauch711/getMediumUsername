@@ -47,6 +47,8 @@ def getMediumUsername(contactName):
                 username = username.replace('/latest','')
             if '/has-recommended' in username:
                 username = username.replace('/has-recommended','')
+            if '/highlight' in username:
+                username = username.replace('/highlights','')
             return(username)
 
 #Call the function to return a usernamel of the person's medium profile.
