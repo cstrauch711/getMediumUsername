@@ -9,7 +9,6 @@ def getMediumUsername(contactName):
 
     #Creates the Google search query for a medium and the contactName
     query = 'https://www.google.com/search?q=medium+' + urllib.parse.quote( contactName.replace(' ','+') )
-
     #This is the request for the google search query and returns the html text of the requested google search page
     try:
         response = requests.get( query )
@@ -23,23 +22,23 @@ def getMediumUsername(contactName):
     if str(soup).find('<h3 class="r"') == -1:
         return False
 
-    #Parses through all the returned links in soup
+    #Parses through all the returned links in soup and search for the right link that contains the correct medium profile
     for s in soup.find_all('h3'):
-        #continues to next link if link does not contain a medium website
-        if str(s.contents).find('/url?q=https://medium.com/') == -1 or str(s.contents).find('&amp') == -1:
+        string = str(s.contents)
+        #if the link is not a medium webiste, skip to next link
+        if 'https://medium.com/' not in string or '&amp' not in string:
             continue
-        #continues to next link if the first AND last name are not within the url as well
-        for n in contactName.split(' '):
-            if str(s.contents).find(n) == -1:
-                continue
-
-        #searching for the right link that contains the correct medium profile
-        if( 'https://medium.com/' in str(s.contents) ):
-            string = str(s.contents)
+        else:
+            #Checks to see if string contains the first and last name of the person in. Returns None if all are not present
+            for n in contactName.split(' '):
+                if string.find(n) == -1:
+                    print(string)
+                    return None
+                else:
+                    continue
             url = string[string.find('https://medium.com/'):string.find('&amp')]#shortening the returned link to a link that will work when used
-            #use the url to get the username and return that
-            username = url[url.find('%40')+3:len(url)]
-            #the three if statements remove the extensions that are sometimes present in the returned username url from the search
+            username = url[url.find('%40')+3:len(url)]#use the url to get the username and return that
+            #the following if statements remove the extensions that are sometimes present in the returned username url from the search
             if '/followers' in username:
                 username = username.replace('/followers','')
             if '/following' in username:
@@ -52,3 +51,5 @@ def getMediumUsername(contactName):
 
 #Call the function to return a usernamel of the person's medium profile.
 print( getMediumUsername( '' ) )
+
+
