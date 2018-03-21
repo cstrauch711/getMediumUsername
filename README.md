@@ -6,5 +6,5 @@ The program requiries the following modules:
 2) BeautifulSoup (to scrape the returned html text and find the correct links)
 3) urllib.parse (to format the the parameteters into a query format)
 
-The program requires a full name (sepeated by a space) in the string parameter on line 54 where the function is called. 
+The program requires a full name (sepeated by a space) in the string parameter on line 55 where the function is called. 
 
