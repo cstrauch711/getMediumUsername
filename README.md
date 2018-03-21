@@ -1,5 +1,5 @@
 # getMediumUsername
-This program takes in a full name to search the web and return a medium profile username if one exists. The program returns False if it is unable to find a matching Medium profile
+This program takes in a full name to search the web and return a medium profile username if one exists. The program returns None if it is unable to find a matching Medium profile
 
 The program requiries the following modules:
 1) requests (to get the web page using the requested url)
