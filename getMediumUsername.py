@@ -2,16 +2,13 @@ import requests
 import urllib.parse
 from bs4 import BeautifulSoup
 
-def getMediumUsername(contactName, companyName):
+def getMediumUsername(contactName):
     #If the contactName field is blank or does not contain a first and last name, it returns false
     if contactName is None or contactName=="" or " " not in contactName:
         return False
 
     #Creates the Google search query for a medium and the contactName
     query = 'https://www.google.com/search?q=medium+' + urllib.parse.quote( contactName.replace(' ','+') )
-    #This will add the companyName to the search query if given, query will stil be created if no companyName is given
-    if companyName != '':
-        query += "+" + urllib.parse.quote( companyName.replace(' ','+') )
 
     #This is the request for the google search query and returns the html text of the requested google search page
     try:
@@ -28,13 +25,13 @@ def getMediumUsername(contactName, companyName):
 
     #Parses through all the returned links in soup
     for s in soup.find_all('h3'):
-        #returns false if no links contain a medium website
-        if s.find('/url?q=https://medium.com/') == -1 or s.find('&amp') == -1:
-            return False
-        #returns false if the first AND last name are not within the url as well
+        #continues to next link if link does not contain a medium website
+        if str(s.contents).find('/url?q=https://medium.com/') == -1 or str(s.contents).find('&amp') == -1:
+            continue
+        #continues to next link if the first AND last name are not within the url as well
         for n in contactName.split(' '):
-            if s.find(n) == -1:
-                return False
+            if str(s.contents).find(n) == -1:
+                continue
 
         #searching for the right link that contains the correct medium profile
         if( 'https://medium.com/' in str(s.contents) ):
@@ -42,7 +39,16 @@ def getMediumUsername(contactName, companyName):
             url = string[string.find('https://medium.com/'):string.find('&amp')]#shortening the returned link to a link that will work when used
             #use the url to get the username and return that
             username = url[url.find('%40')+3:len(url)]
+            #the three if statements remove the extensions that are sometimes present in the returned username url from the search
+            if '/followers' in username:
+                username = username.replace('/followers','')
+            if '/following' in username:
+                username = username.replace('/following','')
+            if '/latest' in username:
+                username = username.replace('/latest','')
+            if '/has-recommended' in username:
+                username = username.replace('/has-recommended','')
             return(username)
 
-#Call the function to return a usernamel of the person's medium profile. Including a company will yield a better chance of finding the correct profile, but it is not necessary
-getMediumUsername( '','')
+#Call the function to return a usernamel of the person's medium profile.
+print( getMediumUsername( '' ) )
